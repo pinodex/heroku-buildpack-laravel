@@ -1,11 +1,8 @@
-# Heroku buildpack: PHP [![Build Status](https://travis-ci.com/heroku/heroku-buildpack-php.svg?branch=main)](https://travis-ci.com/heroku/heroku-buildpack-php)
+# Heroku buildpack: Laravel
 
-![php](https://cloud.githubusercontent.com/assets/51578/8882982/73ea501a-3219-11e5-8f87-311e6b8a86fc.jpg)
+This is a fork of the official [Heroku PHP Buildpack](https://github.com/heroku/heroku-buildpack-php) for Laravel applications.
 
-
-This is the official [Heroku buildpack](http://devcenter.heroku.com/articles/buildpacks) for PHP applications.
-
-It uses Composer for dependency management, supports PHP or HHVM (experimental) as runtimes, and offers a choice of Apache2 or Nginx web servers.
+It uses Composer for dependency management and offers a choice of Apache2 or Nginx web servers.
 
 ## Usage
 
@@ -17,17 +14,13 @@ You'll need to use at least an empty `composer.json` in your application.
 
 If you also have files from other frameworks or languages that could trigger another buildpack to detect your application as one of its own, e.g. a `package.json` which might cause your code to be detected as a Node.js application even if it is a PHP application, then you need to manually set your application to use this buildpack:
 
-    $ heroku buildpacks:set heroku/php
-
-This will use the officially published version. To use the default branch from GitHub instead:
-
-    $ heroku buildpacks:set https://github.com/heroku/heroku-buildpack-php
+    $ heroku buildpacks:set https://github.com/pinodex/heroku-buildpack-laravel
 
 Please refer to [Dev Center](https://devcenter.heroku.com/categories/php) for further usage instructions.
 
 ## Custom Platform Repositories
 
-The buildpack uses Composer repositories to resolve platform (`php`, `hhvm`, `ext-something`, ...) dependencies.
+The buildpack uses Composer repositories to resolve platform (`php`, `ext-something`, ...) dependencies.
 
 To use a custom Composer repository with additional or different platform packages, add the URL to its `packages.json` to the `HEROKU_PHP_PLATFORM_REPOSITORIES` config var:
 
@@ -52,4 +45,3 @@ Please submit all pull requests against `develop` as the base branch.
 ### Custom Platform Packages and Repositories
 
 Please refer to the [README in `support/build/`](support/build/README.md) for instructions.
-

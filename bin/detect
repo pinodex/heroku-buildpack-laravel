@@ -3,19 +3,20 @@
 # convenience functions
 source "$(cd $(dirname $0); cd ..; pwd)"/bin/util/common.sh
 
-if [[ -f "$1/composer.json" || -f "$1/index.php" ]]; then
-	echo "PHP" && exit 0
+if [[ -f "$1/composer.json" && -f "$1/server.php" && -f "$1/public/index.php" && -f "$1/artisan" ]]; then
+	echo "Laravel" && exit 0
 else
 	error <<-EOF
 		Application not supported by this buildpack!
-		
-		The 'heroku/php' buildpack is set on this application, but was
-		unable to detect a PHP codebase.
-		
-		A PHP app on Heroku requires a 'composer.json' at the root of
+
+		The 'https://github.com/pinodex/heroku-buildpack-laravel' buildpack is set on this application, but was
+		unable to detect a Laravel codebase.
+
+		A Laravel app on Heroku requires a 'composer.json' at the root of
 		the directory structure, or an 'index.php' for legacy behavior.
 		
-		If you are trying to deploy a PHP application, ensure that one
+
+		If you are trying to deploy a Laravel application, ensure that one
 		of these files is present at the top level directory.
 		
 		If you are trying to deploy an application written in another

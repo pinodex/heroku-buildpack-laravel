@@ -446,7 +446,6 @@ else
 		For reference, the following runtimes are currently available:
 		
 		PHP:  $(composer show -d "$build_dir/.heroku/php" --available heroku-sys/php 2>&1 | sed -n 's/^versions : //p' | fold -s -w 58 || true)
-		HHVM: $(composer show -d "$build_dir/.heroku/php" --available heroku-sys/hhvm 2>&1 | sed -n 's/^versions : //p' | fold -s -w 58 || true)
 		
 		Please verify that all requirements for runtime versions in
 		'$COMPOSER_LOCK' are compatible with the list above, and ensure
@@ -464,9 +463,6 @@ fi
 if composer show -d "$build_dir/.heroku/php" --installed --quiet heroku-sys/php 2>/dev/null; then
 	engine="php"
 	engine_r="php -r"
-elif composer show -d "$build_dir/.heroku/php" --installed --quiet heroku-sys/hhvm 2>/dev/null; then
-	engine="hhvm"
-	engine_r="hhvm --php -r"
 fi
 
 # log number of installed platform packages
@@ -480,13 +476,6 @@ unset COMPOSER_bak
 rm -rf /app/.heroku/php-min $build_dir/.heroku/php-min
 # unset composer function that used php-min for invocation
 unset -f composer
-
-if [[ "$engine" == "hhvm" ]]; then
-	composer() {
-		$engine $(which composer) "$@"
-	}
-	export -f composer
-fi
 
 # export our "do not auto.start APM extensions" magic INI directory to PHP_INI_SCAN_DIR for ourself and for later buildpacks (but not for runtime)
 export_env_dir "$env_dir" '^PHP_INI_SCAN_DIR$'
@@ -723,8 +712,8 @@ ln -fs $relbins .
 cd $build_dir
 
 if [[ ! -f "Procfile" ]]; then
-	echo "web: heroku-$engine-apache2" > Procfile
-	notice_inline "No Procfile, using 'web: heroku-$engine-apache2'."
+	echo "web: heroku-$engine-nginx" > Procfile
+	notice_inline "No Procfile, using 'web: heroku-$engine-nginx'."
 fi
 
 # write empty WEB_CONCURRENCY.sh to overwrite the defaults logic from a prior buildpack, e.g. Node (all buildpacks use the same filename to allow this)
@@ -749,3 +738,8 @@ export COMPOSER="$COMPOSER_bak"
 unset COMPOSER_bak
 # and remove the composer1 program we needed for platform installs
 rm $build_dir/.heroku/php/bin/composer1
+
+if [ -n "${POST_COMPILE_COMMANDS:-}" ]; then		
+	status "Running Post-compile commands..."
+	eval "$POST_COMPILE_COMMANDS"
+fi
