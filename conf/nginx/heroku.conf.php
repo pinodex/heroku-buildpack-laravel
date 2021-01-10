@@ -60,6 +60,12 @@ http {
 
 		include "<?=getenv('HEROKU_PHP_NGINX_CONFIG_INCLUDE')?>";
 
+		<?php if (getenv('HTTPS')): ?>
+		if ($http_x_forwarded_proto != "https") {
+			return 301 https://$host$request_uri;
+		}
+		<?php endif; ?>
+
 		# restrict access to hidden files, just in case
 		location ~ /\. {
 			deny all;
